@@ -14,7 +14,7 @@ private:
     int songLength;
     PlaylistNode* nextNodePtr;
 public:
-    PlaylistNode::PlaylistNode() : uniqueID("none"), songName("none"), artistName("none"), songLength(0), nextNodePtr(nullptr) { }
+    PlaylistNode() : uniqueID("none"), songName("none"), artistName("none"), songLength(0), nextNodePtr(nullptr) { } //intialization list
     PlaylistNode(string, string, string, int) ;
     void InsertAfter(PlaylistNode*) ;
     void SetNext(PlaylistNode*) ;
@@ -35,8 +35,8 @@ public:
     Playlist();
     void push_back(PlaylistNode*) ;
     void RemoveSong(string) ;
-    void changePos(int, int) ;
-    void PrintSpecificArtist() const ;
+    void ChangePosition(int, int) ;
+    void PrintSpecificArtist(string) const ;
     int TotalTime() const ;
     void OutputFullPlaylist(string) const ;
 };
