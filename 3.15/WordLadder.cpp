@@ -44,4 +44,11 @@ WordLadder::WordLadder(const string &filename) {
        Otherwise, this function outputs to the file the word ladder it finds or outputs
        to the file, the message, "No Word Ladder Found."
     */
-    void outputLadder(const string &start, const string &end, const string &outputFile);
+void outputLadder(const string &start, const string &end, const string &outputFile) 
+{
+    stack<string> string_stack = stack<string> () ;
+    string_stack.push(start) ;
+
+    queue<stack> queue_stack = queue<stack> () ;
+    queue_stack.push(string_stack) ;
+}
