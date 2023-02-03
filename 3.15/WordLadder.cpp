@@ -1,54 +1,91 @@
-#include "WordLadder.h"
-
-#include <fstream>
 #include <iostream>
-#include <queue>
+#include <fstream>
+#include <algorithm>
+#include "WordLadder.h"
 
 using namespace std ;
 
-    /* Passes in the name of a file that contains a dictionary of 5-letter words.
-       Fills the list (dict) with the words within this file. 
-       If the file does not open for any reason or if any word within the file
-       does not have exactly 5 characters, this function should output an
-       error message and return.
-    */
 WordLadder::WordLadder(const string &filename) {
-    string words ;
+    string word ;
+    ifstream inFS(filename) ;
 
-    ifstream inFS(filename);
-
-    if (!inFS.is_open())
+    if (!inFS.is_open()) 
     {
         cout << "Error opening file " << filename << endl ;
+    }
+    else 
+    {
+        inFS >> word ;
+        if (word.length() != 5) {
+            cout << "Error: Word " << word << " is not 5 characters long." << endl ;
+            return ;
+        }
+        dict.push_back(word) ;
+    }
+    inFS.close() ;
+}
+
+void WordLadder::findLadder(const string &start, const string &end, list<string> &dict, stack<string> &wordLadder) {
+    if (start == end) 
+    {
         return ;
     }
 
-    while (inFS >> words) 
-    {
-        if (words.length() != 5)
-        {
-            cout << "Word does not have 5 characters" << endl ;
-            return ;
-        }
-        dict.push_back(words) ;
-    }
+    queue<stack<string>> stack_queue ;
+    stack<string> string_stack ;
+    string_stack.push(start) ;
+    stack_queue.push(string_stack) ;
 
-    return ;
+    while (!stack_queue.empty()) 
+    {
+        stack<string> curr = stack_queue.front() ;
+        stack_queue.pop() ;
+        string currWord = curr.top() ;
+
+        for (auto it = dict.begin(); it != dict.end(); ++it) 
+        {
+            int differences = 0;
+            for (int i = 0; i < 5; ++i) 
+            {
+                if (currWord[i] != (*it)[i]) 
+                {
+                    differences++ ;
+                }
+            }
+            if (differences == 1) 
+            {
+                stack<string> newStack = curr ;
+                newStack.push(*it) ;
+                if (*it == end) 
+                {
+                    wordLadder = newStack ;
+                    return ;
+                }
+                stack_queue.push(newStack) ;
+                it = dict.erase(it) ;
+                it-- ;
+            }
+        }
+    }
 }
 
-    /* Passes in two 5-letter words and the name of an output file.
-       Outputs to this file a word ladder that starts from the first word passed in
-       and ends with the second word passed in.
-       If either word passed in does not exist in the dictionary (dict),
-       this function should output an error message and return.
-       Otherwise, this function outputs to the file the word ladder it finds or outputs
-       to the file, the message, "No Word Ladder Found."
-    */
-void outputLadder(const string &start, const string &end, const string &outputFile) 
+void WordLadder::outputLadder(const string &start, const string &end, const string &outputFile) 
 {
-    stack<string> string_stack = stack<string> () ;
-    string_stack.push(start) ;
+    stack<string> wordLadder ;
+    findLadder(start, end, dict, wordLadder) ;
 
-    queue<stack> queue_stack = queue<stack> () ;
-    queue_stack.push(string_stack) ;
+    ofstream outFS(outputFile);
+    if (!outFS.is_open()) 
+    {
+        cout << "Error opening file " << outputFile << endl ;
+    }
+    else 
+    {
+        while (!wordLadder.empty()) 
+        {
+            outFS << wordLadder.top() << endl ;
+            wordLadder.pop() ;
+        }
+    }
+    outFS.close() ;
 }
