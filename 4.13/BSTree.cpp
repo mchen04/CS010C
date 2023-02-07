@@ -3,62 +3,63 @@
 
 using namespace std ;
 
+// constructor that sets root to nullptr
 BSTree::BSTree()
 {
     root = nullptr ;
 }
 
-
+// destructor that deletes the root node
 BSTree::~BSTree()
 {
     delete root ;
 }
 
-/* Mutators */
-/* Insert an item into the binary search tree. 
-Be sure to keep BST properties. 
-When an item is first inserted into the tree the count should be set to 1. 
-When adding a duplicate string (case sensitive), rather than adding another node, 
-the count variable should be incremented 
-*/
+// function that inserts new string in the binary search tree
 void BSTree::insert(const string &newString)
 {
-    Node* parent = nullptr ;
-    Node* curr = root ;
+    // pointers to track current node and its parent node
+    Node* parentNode = nullptr ;
+    Node* currNode = root ;
+
+    // boolean to keep track of whether the new node will be inserted as the left or right child of the parent node
     bool isLeft = true ;
 
-    while (curr != nullptr && !(newString == curr -> getData()))
+    // find the location where new node should be inserted
+    while (currNode != nullptr && !(newString == currNode -> getData()))
     {
-        parent = curr ;
-        if (curr -> getData() > newString)
+        parentNode = currNode ;
+        if (currNode -> getData() > newString)
         {
-            curr = curr -> getLeft() ;
+            currNode = currNode -> getLeft() ;
             isLeft = true ;
         }
         else
         {
-            curr = curr -> getRight() ; 
+            currNode = currNode -> getRight() ; 
             isLeft = false ;
         }
     }
 
-    if (curr != nullptr) 
+    // if the string is already present, increment its count
+    if (currNode != nullptr) 
     {
-        curr -> setCount(curr -> getCount() + 1) ;
+        currNode -> setCount(currNode -> getCount() + 1) ;
     }
+    // if the string is not present, create a new node and insert it in the tree
     else 
     {
         Node* addNode = new Node(newString) ;
 
-        if (parent != nullptr) 
+        if (parentNode != nullptr) 
         {
             if (isLeft)
             {
-                parent -> setLeft(addNode) ;
+                parentNode -> setLeft(addNode) ;
             }
             else
             {
-                parent -> setRight(addNode) ;
+                parentNode -> setRight(addNode) ;
             }
         }
         else 
@@ -68,264 +69,273 @@ void BSTree::insert(const string &newString)
     }
 }
 
-
-
-/* Remove a specified string from the tree. 
-Be sure to maintain all bianry search tree properties. 
-If removing a node with a count greater than 1, just decrement the count, otherwise, 
-if the count is simply 1, remove the node. 
-You MUST follow the remove algorithm shown in the slides and discussed in class or else 
-your program will not pass the test functions. 
-When removing, 
-if removing a leaf node, simply remove the leaf. Otherwise, 
-if the node to remove has a left child, replace the node to remove with the largest 
-string value that is smaller than the current string to remove 
-(i.e. find the largest value in the left subtree of the node to remove). 
-If the node has no left child, replace the node to remove with the smallest value 
-larger than the current string to remove 
-(i.e. find the smallest value in the right subtree of the node to remove. 
-*/
 void BSTree::remove(const string &key)
 {
+    // If the key is not present in the tree, return
     if (!search(key))
     {
         return ;
     }
+
+    // If the root is the only node in the tree, delete it
     if(root -> getLeft() == nullptr && root -> getRight() == nullptr) {
         delete root ;
         root = NULL ;
         return ;
     }
+
+    // Call helper function to remove the node with the key
     remove(root, key) ;
 }
 
-Node* BSTree::remove(Node* temp, const string &key)
+Node* BSTree::remove(Node* currNode, const string &key)
 {
-    if (temp == nullptr)
+    // If the current node is null, return nullptr
+    if (currNode == nullptr)
     {
         return nullptr ;
     }
-	if (key < temp -> getData()) { 
-	    temp -> setLeft(remove(temp -> getLeft(), key)) ;
+
+    // If the key is smaller than the current node's key, 
+    // remove from the left subtree
+    if (key < currNode -> getData()) { 
+	    currNode -> setLeft(remove(currNode -> getLeft(), key)) ;
 	}
-	else if (key > temp -> getData()) {  
-		temp -> setRight(remove(temp -> getRight(), key)) ;
+	// If the key is larger than the current node's key, 
+	// remove from the right subtree
+	else if (key > currNode -> getData()) {  
+		currNode -> setRight(remove(currNode -> getRight(), key)) ;
 	}
 	else 
     {
-		if (temp -> getCount() > 1) {
-			temp -> setCount(temp -> getCount() - 1);
-            return temp ;
+		// If the count of the node is greater than 1, just decrement the count
+		if (currNode -> getCount() > 1) {
+			currNode -> setCount(currNode -> getCount() - 1);
+            return currNode ;
 		}
-		else if (temp -> getLeft() == nullptr && temp -> getRight() == nullptr) {
-			delete temp ;
+		// If the node has no children, delete it
+		else if (currNode -> getLeft() == nullptr && currNode -> getRight() == nullptr) {
+			delete currNode ;
 			return nullptr ;
 		}
-		else if (temp -> getLeft() == nullptr) {
-			Node *curr = FindMin(temp -> getRight()) ;
-			temp -> setData(curr -> getData()) ;
-			temp -> setCount(curr -> getCount()) ;
-			curr -> setCount(0) ;
+		// If the node has only a right child, 
+		// replace with the minimum of the right subtree
+		else if (currNode -> getLeft() == nullptr) {
+			Node *MinNode = FindMin(currNode -> getRight()) ;
+			currNode -> setData(MinNode -> getData()) ;
+			currNode -> setCount(MinNode -> getCount()) ;
+			MinNode -> setCount(0) ;
 
-			temp -> setRight(remove(temp -> getRight(), curr -> getData())) ;
-			return temp ;
+			currNode -> setRight(remove(currNode -> getRight(), MinNode -> getData())) ;
+			return currNode ;
 		}
-		else if (temp -> getRight() == nullptr) {
-			Node *curr = FindMax(temp -> getLeft()) ;
-			temp -> setData(curr -> getData()) ;
-			temp -> setCount(curr -> getCount()) ;
-			temp-> setCount(0) ;
+		// If the node has only a left child, 
+		// replace with the maximum of the left subtree
+		else if (currNode -> getRight() == nullptr) {
+			Node *MaxNode = FindMax(currNode -> getLeft()) ;
+			currNode -> setData(MaxNode -> getData()) ;
+			currNode -> setCount(MaxNode -> getCount()) ;
+			MaxNode-> setCount(0) ;
 
-			temp -> setLeft(remove(temp -> getLeft(), curr -> getData())) ;
-			return temp ;
-		}
-		else {
-			Node *curr2 = FindMax(temp -> getLeft()) ;
-			temp -> setData(curr2 -> getData()) ;
-			temp -> setCount(curr2 -> getCount()) ;
-			curr2 -> setCount(1) ;
-			temp -> setLeft(remove(temp -> getLeft(), curr2 ->getData())) ;
-            return temp ;
+			currNode -> setLeft(remove(currNode -> getLeft(), MaxNode -> getData())) ;
+			return currNode ;
+        }
+		else 
+		{
+			// both children exist
+			Node *MaxNode = FindMax(currNode -> getLeft()); 
+			// find the maximum node in the left subtree
+			currNode -> setData(MaxNode -> getData()); 
+			// replace the current node's data with the maximum node's data
+			currNode -> setCount(MaxNode -> getCount());
+			MaxNode -> setCount(1);
+			// update the count of the maximum node
+			currNode -> setLeft(remove(currNode -> getLeft(), MaxNode -> getData())); 
+			// remove the maximum node from the left subtree
+			return currNode;
 		}
 	}
-	return temp;
+	return currNode;
 }
 
-Node* BSTree::FindMin(Node* temp) 
+// BSTree::FindMin() - find the minimum node in the tree
+Node* BSTree::FindMin(Node* currNode) 
 {
-    Node* curr = temp ;
+	Node* TransverseNode = currNode;
 
-    while (curr && curr -> getLeft() != nullptr )
-    {
-        curr = curr -> getLeft() ;
-    }
-    return curr ;
+	// transverse the tree until the leftmost node is found
+	while (TransverseNode && TransverseNode -> getLeft() != nullptr)
+	{
+		TransverseNode = TransverseNode -> getLeft();
+	}
+	return TransverseNode;
 }
 
-Node* BSTree::FindMax(Node* temp) 
+// BSTree::FindMax() - find the maximum node in the tree
+Node* BSTree::FindMax(Node* currNode) 
 {
-    Node* curr = temp ;
+	Node* TransverseNode = currNode;
 
-    while (curr && curr -> getRight() != nullptr )
+	// transverse the tree until the rightmost node is found
+    while (TransverseNode && TransverseNode -> getRight() != nullptr )
     {
-        curr = curr -> getRight() ;
+        TransverseNode = TransverseNode -> getRight() ;
     }
-    return curr ;
+    return TransverseNode ;
 }
 
-/* Accessors */
-/* Search for a string in the binary search tree. 
-It should return true if the string is in the tree, and false otherwise. 
-*/
 bool BSTree::search(const string &key) const
 {
+    //calls helper function
     return search(root, key) ;
 }
 
-bool BSTree::search(Node* node, const string &key) const
+//BSTree::search - returns bool if string is found in tree
+bool BSTree::search(Node* currNode, const string &key) const
 {
-    if (node == nullptr)
+    if (currNode == nullptr)
     {
         return false ;
     }
 
-    if (node -> getData() == key)
+    //if data is found
+    if (currNode -> getData() == key)
     {
         return true ;
     }
-
-    return (search(node -> getLeft(), key) || search(node -> getRight(), key)) ;
+    //recursively calls function to return bool, if true is found since it is an || it will return true
+    return (search(currNode -> getLeft(), key) || search(currNode -> getRight(), key)) ; 
 }
 
-/* Find and return the largest value in the tree. Return an empty string if the tree is empty */
 string BSTree::largest() const
 {
-    Node* curr = root ;
+    //node to iteratre through
+    Node* currNode = root ;
 
-    if(curr == nullptr)
+    if(currNode == nullptr)
     {
         return "" ;
     }
 
-    while (curr -> getRight() != nullptr )
+    while (currNode -> getRight() != nullptr )
     {
-        curr = curr -> getRight() ;
+        currNode = currNode -> getRight() ;
     }
-    return curr -> getData() ;
+    //returns bottom right value
+    return currNode -> getData() ;
 }
 
-/* Find and return the smallest value in the tree. Return an emtpy string if the tree is empty */
 string BSTree::smallest() const
 {
-    Node* curr = root ;
+    //node to iterate through
+    Node* currNode = root ;
 
-    if(curr == nullptr)
+    if(currNode == nullptr)
     {
         return "" ;
     }
 
-    while (curr -> getLeft() != nullptr )
+    while (currNode -> getLeft() != nullptr )
     {
-        curr = curr -> getLeft() ;
+        currNode = currNode -> getLeft() ;
     }
-    return curr -> getData() ;
+    //returns botton left value
+    return currNode -> getData() ;
 }
 
-/* Compute and return the height of a particular string in the tree. 
-The height of a leaf node is 0 (count the number of edges on the longest path). 
-Return -1 if the string does not exist. 
-*/
+//returns height from a string
 int BSTree::height(const string& findString) 
 {
-    Node* temp = root;
+    Node* currNode = root;
 
-    while (temp && temp -> getData() != findString)
+    while (currNode && currNode -> getData() != findString)
     {
-        if (temp -> getData() > findString)
+        if (currNode -> getData() > findString)
         {
-            temp = temp -> getLeft();
+            currNode = currNode -> getLeft();
         }
         else
         {
-            temp = temp -> getRight();
+            currNode = currNode -> getRight();
         }
     }
 
-    return temp ? height(0, temp) : -1;
+    //if currNode isn't nullptr it calls recursion, if it is it returns -1
+    return currNode ? height(0, currNode) : -1;
 }
 
-int BSTree::height(int Height, Node* temp) const
+//helper function
+int BSTree::height(int Height, Node* currNode) const
 {
-    if (!temp -> getLeft() && !temp -> getRight())
+    //when hits a node with no leaves
+    if (!currNode -> getLeft() && !currNode -> getRight())
     {
         return Height ;
     }
     else
     {
-       int left = 0 ;
-       int right = 0 ;
+       int leftHeight = 0 ;
+       int rightHeight = 0 ;
 
-       if (temp -> getLeft())
+       if (currNode -> getLeft())
        {
-           left = height(1 + Height, temp -> getLeft()) ;
+            //recursively calls to count height
+           leftHeight = height(1 + Height, currNode -> getLeft()) ;
        }
 
-       if (temp -> getRight())
+       if (currNode -> getRight())
        {
-           right = height(1 + Height, temp -> getRight()) ;
+           rightHeight = height(1 + Height, currNode -> getRight()) ;
        }
-
-       return max(left, right) ;
+        //return the max of the values
+       return max(leftHeight, rightHeight) ;
     }
 }
 
-
-/* Printing */
-/* For all printing orders, each node should be displayed as follows:
-<string> (<count>)
-e.g. goodbye(1), Hello World(3)
-*/
 void BSTree::preOrder() const
 {
-    preOrder(root) ;
+    preOrder(root) ; //calls helper function
 }
 
 void BSTree::postOrder() const
 {
-    postOrder(root) ;
+    postOrder(root) ; //calls helper function
 }
 
 void BSTree::inOrder() const
 {
-    inOrder(root) ;
+    inOrder(root) ; //calls helper function
 }
 
-void BSTree::preOrder(Node* node) const
+//orders with recursion
+void BSTree::preOrder(Node* currNode) const
 {
-    if (node) 
+    if (currNode) 
     {
-        cout << node -> getData() << "(" << node -> getCount() << "), " ;
-        preOrder(node -> getLeft()) ;
-        preOrder(node -> getRight()) ;
+        cout << currNode -> getData() << "(" << currNode -> getCount() << "), " ;
+        preOrder(currNode -> getLeft()) ;
+        preOrder(currNode -> getRight()) ;
     }
 }
 
-void BSTree::postOrder(Node* node) const
+//orders with recursion
+void BSTree::postOrder(Node* currNode) const
 {
-    if (node) 
+    if (currNode) 
     {
-        postOrder(node -> getLeft()) ;
-        postOrder(node -> getRight()) ;
-        cout << node -> getData() << "(" << node -> getCount() << "), " ;
+        postOrder(currNode -> getLeft()) ;
+        postOrder(currNode -> getRight()) ;
+        cout << currNode -> getData() << "(" << currNode -> getCount() << "), " ;
     }
 }
 
-void BSTree::inOrder(Node* node) const
+//orders with recursion
+void BSTree::inOrder(Node* currNode) const
 {
-    if (node) 
+    if (currNode) 
     {
-        inOrder(node -> getLeft()) ;
-        cout << node -> getData() << "(" << node -> getCount() << "), " ;
-        inOrder(node -> getRight()) ;
+        inOrder(currNode -> getLeft()) ;
+        cout << currNode -> getData() << "(" << currNode -> getCount() << "), " ;
+        inOrder(currNode -> getRight()) ;
     }
 }

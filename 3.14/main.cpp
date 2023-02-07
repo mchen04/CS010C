@@ -39,11 +39,11 @@ int main(){
     print_vector(*intVector);
 
     vector<char>* charVector = new vector<char>();
-    charVector->push_back('h');
+    charVector->push_back('b');
+    charVector->push_back('z');
+    charVector->push_back('a');
     charVector->push_back('e');
-    charVector->push_back('4');
-    charVector->push_back('*');
-    charVector->push_back('P');
+    charVector->push_back('l');
 
     selection_sort(*charVector);
     print_vector(*charVector);
