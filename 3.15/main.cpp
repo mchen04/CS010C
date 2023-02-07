@@ -2,19 +2,14 @@
 
 #include <iostream>
 
-using std::cin;
-using std::cout;
-using std::string;
-using std::endl;
+using namespace std ;
 
 int main() {
    string dictFile, wordBegin, wordEnd, outFile;
-   cout << "Enter the name of the dictionary file: ";
-   cin >> dictFile;
-   cout << endl;
-   cout << "Enter the name of the output file: ";
-   cin >> outFile;
-   cout << endl;
+
+   dictFile = "dictionary.txt" ;
+   outFile = "output.txt" ;
+
    cout << "Enter the first word: ";
    cin >> wordBegin;
    cout << endl;

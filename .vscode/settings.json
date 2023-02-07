@@ -4,6 +4,11 @@
         "ostream": "cpp",
         "filesystem": "cpp",
         "stdexcept": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "__split_buffer": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "__node_handle": "cpp",
+        "new": "cpp"
     }
 }

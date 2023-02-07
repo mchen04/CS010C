@@ -2,9 +2,11 @@
 #define WORDLADDER_H
 
 #include <list>
-#include <string>
 #include <stack>
 #include <queue>
+#include <string>
+
+using namespace std ;
 
 class WordLadder {
   private:

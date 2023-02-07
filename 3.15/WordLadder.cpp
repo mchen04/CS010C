@@ -2,71 +2,83 @@
 #include <fstream>
 #include <algorithm>
 #include "WordLadder.h"
+#include <string>
+#include <list>
 
 using namespace std ;
 
 WordLadder::WordLadder(const string &filename) {
-    string word ;
+    string word ; //
     ifstream inFS(filename) ;
 
     if (!inFS.is_open()) 
     {
         cout << "Error opening file " << filename << endl ;
+        return ;
     }
-    else 
+    
+    while (getline(inFS, word))
     {
-        inFS >> word ;
-        if (word.length() != 5) {
-            cout << "Error: Word " << word << " is not 5 characters long." << endl ;
-            return ;
+        // Verify not empty string
+        if (!word.empty())
+        {
+            // Check character count
+            if (word.size() != 5)
+            {
+                // Word was not 5 letters
+                cout << "Error: word " << word << " not 5 characters long" << endl;
+                return;
+            }
+
+            dict.push_back(word);
         }
-        dict.push_back(word) ;
     }
-    inFS.close() ;
 }
 
 void WordLadder::findLadder(const string &start, const string &end, list<string> &dict, stack<string> &wordLadder) {
     if (start == end) 
     {
-        return ;
+        return;
     }
 
-    queue<stack<string>> stack_queue ;
-    stack<string> string_stack ;
-    string_stack.push(start) ;
-    stack_queue.push(string_stack) ;
+    queue<stack<string> > stack_queue;
+    stack<string> string_stack;
+    string_stack.push(start);
+    stack_queue.push(string_stack);
 
     while (!stack_queue.empty()) 
     {
-        stack<string> curr = stack_queue.front() ;
-        stack_queue.pop() ;
-        string currWord = curr.top() ;
+        stack<string> curr = stack_queue.front();
+        stack_queue.pop();
+        string currWord = curr.top();
 
-        for (auto it = dict.begin(); it != dict.end(); ++it) 
+        list<string>::iterator it;
+        for (it = dict.begin(); it != dict.end(); it++) 
         {
             int differences = 0;
-            for (int i = 0; i < 5; ++i) 
+            for (int j = 0; j < 5; j++) 
             {
-                if (currWord[i] != (*it)[i]) 
+                if (currWord[j] != (*it)[j]) 
                 {
-                    differences++ ;
+                    differences++;
                 }
             }
             if (differences == 1) 
             {
-                stack<string> newStack = curr ;
-                newStack.push(*it) ;
+                stack<string> newStack = curr;
+                newStack.push(*it);
                 if (*it == end) 
                 {
-                    wordLadder = newStack ;
+                    wordLadder = newStack;
                     return ;
                 }
-                stack_queue.push(newStack) ;
-                it = dict.erase(it) ;
-                it-- ;
+                stack_queue.push(newStack);
+                it = dict.erase(it);
+                it--;
             }
         }
     }
+    wordLadder.push("");
 }
 
 void WordLadder::outputLadder(const string &start, const string &end, const string &outputFile) 
@@ -78,14 +90,32 @@ void WordLadder::outputLadder(const string &start, const string &end, const stri
     if (!outFS.is_open()) 
     {
         cout << "Error opening file " << outputFile << endl ;
+        return ;
     }
-    else 
+
+    if (start == end) 
     {
-        while (!wordLadder.empty()) 
-        {
-            outFS << wordLadder.top() << endl ;
-            wordLadder.pop() ;
-        }
+        wordLadder.push(start) ;
     }
+
+    if (wordLadder.top() == "")
+    {
+        outFS << "No Word Ladder Found." << endl ;
+        return;
+    }
+
+    stack<string> reverse = stack<string>();
+    while (!wordLadder.empty())
+    {
+        reverse.push(wordLadder.top());
+        wordLadder.pop();
+    }
+
+    while (!reverse.empty())
+    {
+        outFS << reverse.top() << endl ;
+        reverse.pop() ;
+    }
+
     outFS.close() ;
 }

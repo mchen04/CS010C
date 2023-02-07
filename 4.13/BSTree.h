@@ -39,12 +39,16 @@ class BSTree {
                 (i.e. find the smallest value in the right subtree of the node to remove. 
          */
         void remove(const string &key);
+        Node* remove(Node* temp, const string &key) ;
+        Node* FindMin(Node* temp) ;
+        Node* FindMax(Node* temp) ;
 
         /* Accessors */
         /* Search for a string in the binary search tree. 
            It should return true if the string is in the tree, and false otherwise. 
          */
         bool search(const string &key) const;
+        bool search(Node* Node, const string &key) const ;
         /* Find and return the largest value in the tree. Return an empty string if the tree is empty */
         string largest() const;
         /* Find and return the smallest value in the tree. Return an emtpy string if the tree is empty */
@@ -53,8 +57,8 @@ class BSTree {
            The height of a leaf node is 0 (count the number of edges on the longest path). 
            Return -1 if the string does not exist. 
          */
-        int height(const string&) const;
-
+        int height(const string&) ;
+         int height(int initHeight, Node *node) const ;
         /* Printing */
         /* For all printing orders, each node should be displayed as follows:
            <string> (<count>)
@@ -63,6 +67,11 @@ class BSTree {
         void preOrder() const;
         void postOrder() const;
         void inOrder() const;
+
+         void preOrder(Node*) const;
+         void postOrder(Node*) const;
+         void inOrder(Node*) const;
+
 };
 
 #endif // __BSTREE_H__
