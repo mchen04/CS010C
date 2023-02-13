@@ -36,6 +36,8 @@ private:
   appropriare location.*/
   void trickleDown(int);
 
+  void swap(int, int) ;
+
   //You can include additional private helper functions here
 };
 #endif
