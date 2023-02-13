@@ -24,7 +24,7 @@ void Heap::enqueue(PrintJob* addElement)
     {
       int currentIndex = numItems ;
 
-      while (currentIndex > 0 && arr[(currentIndex - 1) / 2]->getPriority() < addElement->getPriority())
+      while (currentIndex > 0 && arr[(currentIndex - 1) / 2] -> getPriority() < addElement -> getPriority())
       {
       arr[currentIndex] = arr[(currentIndex - 1) / 2] ;
       currentIndex = (currentIndex - 1) / 2 ;
@@ -45,8 +45,8 @@ void Heap::dequeue()
     {
       arr[0] = arr[numItems - 1] ; // move the last element to the root
     }
-    numItems--;
-    trickleDown(0); // move the new root down the heap to the appropriate location
+    numItems-- ;
+    trickleDown(0) ; // move the new root down the heap to the appropriate location
   }
 }
 
@@ -61,9 +61,9 @@ void Heap::print()
 {
   if (numItems != 0)
   {
-    cout << "Priority: " << highest()->getPriority() // print priority
-          << ", Job Number: " << highest()->getJobNumber() // print job number
-          << ", Number of Pages: " << highest()->getPages() ; // print number of pages
+    cout << "Priority: " << highest() -> getPriority() // print priority
+          << ", Job Number: " << highest() -> getJobNumber() // print job number
+          << ", Number of Pages: " << highest() -> getPages() ; // print number of pages
   }
   cout << endl ; // print a new line
 }
@@ -79,20 +79,20 @@ void Heap::trickleDown(int index)
   {
     if (arr[index] -> getPriority() < arr[numItems - 1] -> getPriority())
     {
-      swap(index, numItems - 1); // swap if necessary
+      swap(index, numItems - 1) ; // swap if necessary
     }
   }
   else // if the current index has two children
   {
     PrintJob* leftChild = arr[index * 2 + 1] ;
     PrintJob* rightChild = arr[index * 2 + 2] ;
-    if (leftChild->getPriority() > rightChild->getPriority()) // compare priority of the two children
+    if (leftChild -> getPriority() > rightChild -> getPriority()) // compare priority of the two children
     {
-      if (leftChild->getPriority() > arr[index]->getPriority()) // compare priority with the left child
+      if (leftChild -> getPriority() > arr[index] -> getPriority()) // compare priority with the left child
       {
-        swap(index, index * 2 + 1); // swap if necessary
+        swap(index, index * 2 + 1) ; // swap if necessary
       }
-      trickleDown(index * 2 + 1); // recurse on the left child
+      trickleDown(index * 2 + 1) ; // recurse on the left child
     }
     else
     {
