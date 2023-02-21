@@ -111,7 +111,6 @@ Node* BSTree::remove(Node* currNode, const string &key)
 		// If the count of the node is greater than 1, just decrement the count
 		if (currNode -> getCount() > 1) {
 			currNode -> setCount(currNode -> getCount() - 1);
-            return currNode ;
 		}
 		// If the node has no children, delete it
 		else if (currNode -> getLeft() == nullptr && currNode -> getRight() == nullptr) {
@@ -127,7 +126,6 @@ Node* BSTree::remove(Node* currNode, const string &key)
 			MinNode -> setCount(0) ;
 
 			currNode -> setRight(remove(currNode -> getRight(), MinNode -> getData())) ;
-			return currNode ;
 		}
 		// If the node has only a left child, 
 		// replace with the maximum of the left subtree
@@ -138,22 +136,21 @@ Node* BSTree::remove(Node* currNode, const string &key)
 			MaxNode-> setCount(0) ;
 
 			currNode -> setLeft(remove(currNode -> getLeft(), MaxNode -> getData())) ;
-			return currNode ;
         }
 		else 
 		{
 			// both children exist
-			Node *MaxNode = FindMax(currNode -> getLeft()); 
+			Node *MaxNode = FindMax(currNode -> getLeft());  
 			// find the maximum node in the left subtree
-			currNode -> setData(MaxNode -> getData()); 
+			currNode -> setData(MaxNode -> getData()) ; 
 			// replace the current node's data with the maximum node's data
-			currNode -> setCount(MaxNode -> getCount());
-			MaxNode -> setCount(1);
+			currNode -> setCount(MaxNode -> getCount()) ;
+			MaxNode -> setCount(1) ;
 			// update the count of the maximum node
-			currNode -> setLeft(remove(currNode -> getLeft(), MaxNode -> getData())); 
+			currNode -> setLeft(remove(currNode -> getLeft(), MaxNode -> getData()));  
 			// remove the maximum node from the left subtree
-			return currNode;
 		}
+        return currNode ;
 	}
 	return currNode;
 }
