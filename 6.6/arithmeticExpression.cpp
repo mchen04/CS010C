@@ -12,17 +12,34 @@ arithmeticExpression::arithmeticExpression(const string &expression) : infixExpr
        and then generates the tree and assigns the root node to the 
        root data field. The key for the first node is 'a', 'b' for the second node and so on. */
 
-/*
+
 void arithmeticExpression::buildTree()
 {
+    string postFix = infix_to_postfix() ;
 
+    char key = 'a' ;
+
+    root = buildNode(postFix, key) ;
 }
 
-TreeNode* arithmeticExpression::buildNode(string &eq, char &key)
+TreeNode* arithmeticExpression::buildNode(string &expression, char &key)
 {
+    if (!expression.empty())
+    {
+        TreeNode* NewNode = new TreeNode(expression.at(expression.size() - 1), key) ;
+        key++ ;
+        expression.pop_back() ;
 
+        if (priority(NewNode -> data) > 0)
+        {
+            NewNode -> right = buildNode(expression, key) ;
+            NewNode -> left = buildNode(expression, key) ;
+        }
+        return NewNode ;
+    }
+    return nullptr ;
 }
-*/
+
 
 int arithmeticExpression::priority(char op){
     int priority = 0;
@@ -79,7 +96,7 @@ string arithmeticExpression::infix_to_postfix(){
     }
     return oss.str();
 }
-
+/*
 void arithmeticExpression::visualizeTree(const string &outputFilename){
     ofstream outFS(outputFilename.c_str());
     if(!outFS.is_open()){
@@ -94,6 +111,7 @@ void arithmeticExpression::visualizeTree(const string &outputFilename){
     string command = "dot -Tjpg " + outputFilename + " -o " + jpgFilename;
     system(command.c_str());
 }
+*/
 
 void arithmeticExpression::infix()
 {
@@ -110,32 +128,42 @@ void arithmeticExpression::postfix()
     postfix(root);
 }
 
-void arithmeticExpression::infix(TreeNode *node)
+void arithmeticExpression::infix(TreeNode *currNode)
 {
-    if (node != nullptr)
+    if (currNode != nullptr)
     {
-        infix(node->left);
-        cout << node->data;
-        infix(node->right);
+        if (currNode -> left != nullptr)
+        {
+            cout << "(" ;
+        }
+
+        infix(currNode -> left) ;
+        cout << currNode -> data ;
+        infix(currNode -> right) ;
+
+        if (currNode -> left != nullptr)
+        {
+            cout << ")" ;
+        }
     }
 }
 
-void arithmeticExpression::prefix(TreeNode *node)
+void arithmeticExpression::prefix(TreeNode *currNode)
 {
-    if (node != nullptr)
+    if (currNode != nullptr)
     {
-        cout << node->data;
-        prefix(node->left);
-        prefix(node->right);
+        cout << currNode -> data ;
+        prefix(currNode -> left) ;
+        prefix(currNode -> right) ;
     }
 }
 
-void arithmeticExpression::postfix(TreeNode *node)
+void arithmeticExpression::postfix(TreeNode *currNode)
 {
-    if (node != nullptr)
+    if (currNode != nullptr)
     {
-        postfix(node->left);
-        postfix(node->right);
-        cout << node->data;
+        postfix(currNode -> left) ;
+        postfix(currNode -> right) ;
+        cout << currNode -> data ;
     }
 }
