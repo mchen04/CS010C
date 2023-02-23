@@ -6,6 +6,7 @@
 
 using namespace std ;
 
+// constructor that initializes the infixExpression and root data members
 arithmeticExpression::arithmeticExpression(const string &expression) : infixExpression(expression), root(nullptr) {}
 
 /* Converts the infixExpression to its equivalent postfix string
@@ -13,31 +14,37 @@ arithmeticExpression::arithmeticExpression(const string &expression) : infixExpr
        root data field. The key for the first node is 'a', 'b' for the second node and so on. */
 
 
+// converts the infixExpression to its equivalent postfix string
+// and then generates the tree and assigns the root node to the root data field
+// the key for the first node is 'a', 'b' for the second node and so on.
 void arithmeticExpression::buildTree()
 {
-    string postFix = infix_to_postfix() ;
+    string postFix = infix_to_postfix(); // convert infix expression to postfix
+    char key = 'a';                      // key for the first node
 
-    char key = 'a' ;
-
-    root = buildNode(postFix, key) ;
+    root = buildNode(postFix, key); // generate the tree recursively
 }
 
-TreeNode* arithmeticExpression::buildNode(string &expression, char &key)
+// generates a node of the expression tree
+// takes a string reference and a char reference as arguments
+// the string reference is the postfix expression
+// the char reference is the key for the node
+TreeNode* arithmeticExpression::buildNode(string& expression, char& key)
 {
-    if (!expression.empty())
+    if (!expression.empty()) // check if the postfix expression is not empty
     {
-        TreeNode* NewNode = new TreeNode(expression.at(expression.size() - 1), key) ;
-        key++ ;
-        expression.pop_back() ;
+        TreeNode* newNode = new TreeNode(expression.back(), key); // create a new node with data as the last character in the postfix expression
+        key++;                                                    // increment the key for the next node
+        expression.pop_back();                                    // remove the last character from the postfix expression
 
-        if (priority(NewNode -> data) > 0)
+        if (priority(newNode->data) > 0) // if the node is an operator
         {
-            NewNode -> right = buildNode(expression, key) ;
-            NewNode -> left = buildNode(expression, key) ;
+            newNode->right = buildNode(expression, key); // recursively generate the right subtree
+            newNode->left = buildNode(expression, key);  // recursively generate the left subtree
         }
-        return NewNode ;
+        return newNode; // return the node
     }
-    return nullptr ;
+    return nullptr; // return null pointer if the postfix expression is empty
 }
 
 
@@ -115,33 +122,35 @@ void arithmeticExpression::visualizeTree(const string &outputFilename){
 
 void arithmeticExpression::infix()
 {
-    infix(root);
+    infix(root); // call the private infix function with the root node
 }
 
 void arithmeticExpression::prefix()
 {
-    prefix(root);
+    prefix(root); // call the private prefix function with the root node
 }
 
 void arithmeticExpression::postfix()
 {
-    postfix(root);
+    postfix(root); // call the private postfix function with the root node
 }
 
 void arithmeticExpression::infix(TreeNode *currNode)
 {
-    if (currNode != nullptr)
+    if (currNode != nullptr) // base case: if the node is not null
     {
-        if (currNode -> left != nullptr)
+        if (currNode -> left != nullptr) // if the current node has a left child, add an opening parenthesis
         {
             cout << "(" ;
         }
 
-        infix(currNode -> left) ;
-        cout << currNode -> data ;
-        infix(currNode -> right) ;
+        infix(currNode -> left) ; // recursively traverse the left subtree
 
-        if (currNode -> left != nullptr)
+        cout << currNode -> data ; // print the current node's data
+
+        infix(currNode -> right) ; // recursively traverse the right subtree
+
+        if (currNode -> left != nullptr) // if the current node has a left child, add a closing parenthesis
         {
             cout << ")" ;
         }
@@ -150,20 +159,24 @@ void arithmeticExpression::infix(TreeNode *currNode)
 
 void arithmeticExpression::prefix(TreeNode *currNode)
 {
-    if (currNode != nullptr)
+    if (currNode != nullptr) // base case: if the node is not null
     {
-        cout << currNode -> data ;
-        prefix(currNode -> left) ;
-        prefix(currNode -> right) ;
+        cout << currNode -> data ; // print the current node's data
+
+        prefix(currNode -> left) ; // recursively traverse the left subtree
+
+        prefix(currNode -> right) ; // recursively traverse the right subtree
     }
 }
 
 void arithmeticExpression::postfix(TreeNode *currNode)
 {
-    if (currNode != nullptr)
+    if (currNode != nullptr) // base case: if the node is not null
     {
-        postfix(currNode -> left) ;
-        postfix(currNode -> right) ;
-        cout << currNode -> data ;
+        postfix(currNode -> left) ; // recursively traverse the left subtree
+
+        postfix(currNode -> right) ; // recursively traverse the right subtree
+
+        cout << currNode -> data ; // print the current node's data
     }
 }
