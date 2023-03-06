@@ -25,6 +25,12 @@ private:
     void insertHelper(Node*&, const string&);
     void removeHelper(Node*&, const string&);
     bool searchHelper(Node*, const string&) const;
+    Node* Merge(Node*) ;
+    string MinKey(Node*) ;
+    Node* GetChild(Node*, int) ;
+    Node* BTreeNextNode(Node*, string) ;
+    bool BTreeKeySwap(Node*, string, string) ;
+    
 };
 
 #endif
