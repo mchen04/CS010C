@@ -8,20 +8,20 @@
 
 using namespace std;
 
-class HashTable {
+class HashTable
+{
+  private:
+    list<WordEntry> *hashTable;
+    int size;
 
- private:
-	list<WordEntry> *hashTable;
-	int size;
+  public:
+    HashTable(int);
+    bool contains(const string &);
+    double getAverage(const string &);
+    void put(const string &, int);
 
- public:
-	HashTable(int);
-	bool contains(const string &);
-	double getAverage(const string &);
-	void put(const string &, int);
- 
- private:
-	int computeHash(const string &);
+  private:
+    int computeHash(const string &);
 };
 
 #endif
