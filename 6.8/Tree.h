@@ -25,6 +25,7 @@ private:
     void insertHelper(Node*&, const string&);
     void removeHelper(Node*&, const string&);
     bool searchHelper(Node*, const string&) const;
+    void InsertKeyWithChildren(Node* parent, const string& key, Node* leftChild, Node* rightChild) ;
     Node* Merge(Node*) ;
     string MinKey(Node*) ;
     Node* GetChild(Node*, int) ;
