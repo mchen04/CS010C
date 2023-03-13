@@ -22,16 +22,9 @@ private:
     void preOrderHelper(Node*) const;
     void inOrderHelper(Node*) const;
     void postOrderHelper(Node*) const;
-    void insertHelper(Node*&, const string&);
-    void removeHelper(Node*&, const string&);
+    void splitNode(Node*, const string&) ;
+    void shiftUp(Node* node) ;
     bool searchHelper(Node*, const string&) const;
-    void InsertKeyWithChildren(Node* parent, const string& key, Node* leftChild, Node* rightChild) ;
-    Node* Merge(Node*) ;
-    string MinKey(Node*) ;
-    Node* GetChild(Node*, int) ;
-    Node* BTreeNextNode(Node*, string) ;
-    bool BTreeKeySwap(Node*, string, string) ;
-    
-};
+} ;
 
 #endif

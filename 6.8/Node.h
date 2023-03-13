@@ -1,13 +1,13 @@
-#ifndef __NODE_H
-#define __NODE_H
+#ifndef __NODE_H__
+#define __NODE_H__
 
 #include <string>
 
-using namespace std;
+using std::string;
 
-class Node {
-
-  friend class Tree;
+class Node
+{
+    friend class Tree;
 
   private:
     string small;
@@ -18,10 +18,13 @@ class Node {
     Node *right;
     Node *parent;
 
-    Node() ;
-
     // Add additional functions/variables here. Remember, you may not add any
     // Node * or string variables.
+
+    /* I hope the constructor doesn't count under the conditions above :( */
+    Node();
+    bool hasTwoStrings() const;
+    bool hasTwoChildren() const ;
 
 };
 
