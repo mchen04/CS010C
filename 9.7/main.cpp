@@ -10,6 +10,8 @@ int genRandInt(int low, int high) {
    return low + rand() % (high - low + 1);
 }
 
+// This function fills three arrays of size NUMBERS_SIZE
+// with random integers between 0 and NUMBERS_SIZE.
 void fillArrays(int arr1[], int arr2[], int arr3[]) {
     for(int i = 0; i < NUMBERS_SIZE; ++i){
         arr1[i] = genRandInt(0,NUMBERS_SIZE);
@@ -18,6 +20,8 @@ void fillArrays(int arr1[], int arr2[], int arr3[]) {
     }
 }
 
+// This function implements the QuickSort algorithm
+// with the pivot element being the middle element.
 void Quicksort_midpoint(int numbers[], int i, int j) {
     int left = i, right = j;
     int tmp;
@@ -44,14 +48,18 @@ void Quicksort_midpoint(int numbers[], int i, int j) {
 
     if (i < right)
     {
+        // Recursively sort the left partition
         Quicksort_midpoint(numbers, i, right);
     }
     if (left < j)
     {
+        // Recursively sort the right partition
         Quicksort_midpoint(numbers, left, j);
     }
 }
 
+// This function implements the QuickSort algorithm
+// with the pivot element being the median of three elements.
 void Quicksort_medianOfThree(int numbers[], int i, int k)
 {
     // Base case: If there are 1 or zero elements to sort,
@@ -120,21 +128,25 @@ void Quicksort_medianOfThree(int numbers[], int i, int k)
         }
     }
 
-    // Recursively sort low partition (i to j) and
-    // high partition (j + 1 to k)
+    // Recursively sort the two partitions
     Quicksort_medianOfThree(numbers, i, right);
     Quicksort_medianOfThree(numbers, left, k);
 }
 
+// This function implements the insertion sort algorithm to sort an array of integers in ascending order
 void InsertionSort(int numbers[], int numbersSize) {
    int i, j, key;
+   // Traverse through the array starting from the second element
    for (i = 1; i < numbersSize; i++) {
+        // Store the current element in a key variable
        key = numbers[i];
+       // Compare the key with each element before it and shift the elements to the right if they are greater than the key
        j = i - 1;
        while (j >= 0 && numbers[j] > key) {
            numbers[j + 1] = numbers[j];
            j = j - 1;
        }
+       // Insert the key at the correct position
        numbers[j + 1] = key;
    }
 }

@@ -101,7 +101,11 @@ int main() {
 */
 HashTable::HashTable(int size)
 {
+    // Store the input size as an instance variable of the HashTable object
     this -> size = size ;
+    
+    // Allocate memory for an array of linked lists, with size equal to the input size
+    // Each linked list will store WordEntry objects with the same hash value
     hashTable = new list<WordEntry>[size] ;
 }
 
@@ -111,14 +115,21 @@ HashTable::HashTable(int size)
 *  be sure to use the size of the array to
 *  ensure array index doesn't go out of bounds
 */
+// Compute a hash value for the input string 'word'
 int HashTable::computeHash(const string &word)
 {
-    int hash = 0 ;
+    int hash = 0 ;  // Initialize hash value to 0
+    
+    // Iterate through each character in the string and add its ASCII value to the hash
     for (char c : word) {
         hash += c ;
     }
+    
+    // Take the modulo of the hash value with the size of the hash table
+    // This ensures that the hash value is within the range of indices for the hash table array
     return hash % size ;
 }
+
 
 /* put
 *  input: string word and int score to be inserted
@@ -127,18 +138,27 @@ int HashTable::computeHash(const string &word)
 *   if not, create a new Entry and push it on the list at the
 *   appropriate array index
 */
+// Insert a new WordEntry object into the hash table with the given word and score
 void HashTable::put(const string &word, int score)
 {
+    // Compute the hash value for the input word to determine its index in the hash table
     int index = computeHash(word) ;
+    
+    // Check if the word already exists in the hash table at the given index
+    // If so, update its score instead of adding a new WordEntry object
     for (WordEntry &entry : hashTable[index]) {
         if (entry.getWord() == word) {
             entry.addNewAppearance(score) ;
             return ;
         }
     }
+    
+    // If the word does not already exist in the hash table, create a new WordEntry object
+    // and add it to the linked list at the given index
     WordEntry newEntry(word, score) ;
     hashTable[index].push_back(newEntry) ;
 }
+
 
 /* getAverage
 *  input: string word
@@ -148,29 +168,45 @@ void HashTable::put(const string &word, int score)
 *  then return the average
 *  If not found, return the value 2.0 (neutral result)
 */
+// Compute the average score for all WordEntry objects in the hash table with the given word
 double HashTable::getAverage(const string &word)
 {
+    // Compute the hash value for the input word to determine its index in the hash table
     int index = computeHash(word) ;
+    
+    // Search for the WordEntry object with the given word in the linked list at the computed index
     for (WordEntry &entry : hashTable[index]) {
         if (entry.getWord() == word) {
+            // If a matching WordEntry object is found, return its average score
             return entry.getAverage() ;
         }
     }
+    
+    // If no matching WordEntry object is found, return a default value of 2.0
     return 2.0 ;
 }
+
 
 /* contains
 * input: string word
 * output: true if word is in the hash table
 *         false if word is not in the hash table
 */
+// Check if the hash table contains at least one WordEntry object with the given word
 bool HashTable::contains(const string &word)
 {
+    // Compute the hash value for the input word to determine its index in the hash table
     int index = computeHash(word) ;
+    
+    // Search for the WordEntry object with the given word in the linked list at the computed index
     for (WordEntry &entry : hashTable[index]) {
         if (entry.getWord() == word) {
+            // If a matching WordEntry object is found, return true
             return true ;
         }
     }
+    
+    // If no matching WordEntry object is found, return false
     return false ;
 }
+
