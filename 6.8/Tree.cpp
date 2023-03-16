@@ -15,10 +15,8 @@ Tree::~Tree()
     delete root ; // Free the memory allocated to the root node upon destruction.
 }
 
-void Tree::insert(const string &str)
-{
-    if (!root)
-    {
+void Tree::insert(const string& str) {
+    if (!root) {
         // If the root node is empty, create a new node with the given string as the small string and return.
         root = new Node();
         root->small = str;
@@ -26,49 +24,27 @@ void Tree::insert(const string &str)
     }
 
     Node* targetNode = root;
-    while (targetNode->left)
-    {
+    while (targetNode->left) {
         // Traverse down the tree to find the appropriate position for the new string.
-        if (targetNode->hasTwoStrings())
-        {
-            // If the current node has two strings, determine which branch to follow based on the value of the given string.
-            if (targetNode->small > str)
-                targetNode = targetNode->left;
-            else if (targetNode->large < str)
-                targetNode = targetNode->right;
-            else
-                targetNode = targetNode->middle;
-        }
-        else
-        {
-            // If the current node has only one string, follow the appropriate branch based on the value of the given string.
-            if (targetNode->small > str)
-                targetNode = targetNode->left;
-            else
-                targetNode = targetNode->middle;
-        }
+        targetNode = targetNode->hasTwoStrings() ?
+            (targetNode->small > str ? targetNode->left :
+                (targetNode->large < str ? targetNode->right : targetNode->middle)) :
+            (targetNode->small > str ? targetNode->left : targetNode->middle);
     }
 
-    if (targetNode->hasTwoStrings())
-    {
+    if (targetNode->hasTwoStrings()) {
         // If the target node has two strings, split it into three nodes and insert the new string between the small and large strings.
         string small, middle, large;
-        if (targetNode->small > str)
-        {
+        if (targetNode->small > str) {
             small = str;
             middle = targetNode->small;
             large = targetNode->large;
-        }
-        else
-        {
+        } else {
             small = targetNode->small;
-            if (targetNode->large < str)
-            {
+            if (targetNode->large < str) {
                 middle = targetNode->large;
                 large = str;
-            }
-            else
-            {
+            } else {
                 middle = str;
                 large = targetNode->large;
             }
@@ -85,16 +61,21 @@ void Tree::insert(const string &str)
         smallNode->parent = targetNode;
         largeNode->parent = targetNode;
         shiftUp(targetNode);
-    }
-    else
-    {
+    } else {
         // If the target node has only one string, insert the new string into the node.
-        if (targetNode->small > str)
-            targetNode->large = targetNode->small, targetNode->small = str;
-        else
-            targetNode->large = str;
+        insertStringIntoNode(targetNode, str);
     }
 }
+
+void Tree::insertStringIntoNode(Node* node, const string& str) {
+    if (node->small > str) {
+        node->large = node->small;
+        node->small = str;
+    } else {
+        node->large = str;
+    }
+}
+
 
 
 void Tree::shiftUp(Node* node) 
@@ -184,14 +165,15 @@ void Tree::shiftUp(Node* node)
 }
 
 
-void Tree::remove(const string &str)
-{
+// Finds the node containing the given string in the tree
+// Returns a pointer to the node if found, otherwise returns nullptr
+Node* Tree::findNode(const string& str) const {
     Node* searchNode = root;
     while (searchNode)
     {
         if (searchNode->small == str || (searchNode->hasTwoStrings() && searchNode->large == str))
         {
-            break;
+            return searchNode;
         }
         else 
         {
@@ -212,67 +194,85 @@ void Tree::remove(const string &str)
             }
         }
     }
+    // String not found, return nullptr
+    return nullptr;
+}
 
-    if (searchNode)
+// Removes the node containing the given string from the tree
+void Tree::remove(const string &str)
+{
+    // Find the node to remove
+    Node* nodeToRemove = findNode(str);
+
+    // If the string is not found, return
+    if (!nodeToRemove) {
+        return;
+    }
+
+    // If the node has two strings, remove the target string
+    if (nodeToRemove->hasTwoStrings())
     {
-        if (searchNode->hasTwoStrings())
+        if (str == nodeToRemove->small)
         {
-            if (str == searchNode->small)
-            {
-                searchNode->small = searchNode->large;
-                searchNode->large = "";
-            }
-            else
-            {
-                searchNode->large = "";
-            }
+            nodeToRemove->small = nodeToRemove->large;
+            nodeToRemove->large = "";
         }
         else
         {
-            Node* parent = searchNode->parent;
-            if (parent) {
-                if (str < parent->small) {
-                    parent->left = nullptr;
-                    parent->large = parent->middle->small;
-                    parent->middle = nullptr;
-                } else {
-                    parent->middle = nullptr;
-                    parent->large = parent->small;
-                    parent->small = parent->left->small;
-                    parent->left = nullptr;
-                }
+            nodeToRemove->large = "";
+        }
+    }
+    else // Node has only one string
+    {
+        Node* parent = nodeToRemove->parent;
+        if (parent) {
+            // If node has a parent, remove it and update the parent's children
+            if (parent->left == nodeToRemove) {
+                parent->left = nullptr;
+                parent->large = parent->middle->small;
+                parent->middle = nullptr;
+            } else {
+                parent->middle = nullptr;
+                parent->large = parent->small;
+                parent->small = parent->left->small;
+                parent->left = nullptr;
             }
-            else
-            {
+            delete nodeToRemove;
+        }
+        else // Node is the root
+        {
+            if (root->left) { // If the root has children, create a new root with its children
                 Node* temp = new Node();
-                if (root->left) {
-                    temp->small = root->left->small;
-                    temp->large = root->middle->small;
-                    root = temp;
-                } else {
-                    root = nullptr;
-                }
+                temp->small = root->left->small;
+                temp->large = root->middle->small;
+                root = temp;
+                delete nodeToRemove;
+            } else { // If the root is a leaf, simply delete it
+                delete root;
+                root = nullptr;
             }
         }
     }
 }
 
-
 bool Tree::search(const string &key) const 
 {
+   //calls helper function
     return searchHelper(root, key) ;
 }
 
 bool Tree::searchHelper(Node* currNode, const string &key) const 
 {
+   //checks if node exists
     if (currNode) 
     { 
-        if (currNode -> small == key || currNode -> large == key) 
+        if (currNode -> small == key || currNode -> large == key) //checks node to see if any values are same as key
         {
             return true;
         }
         else 
         {
+            //recusively calls in direction and node based on value in position in node
             if (key < currNode -> small) 
             {
                 return searchHelper(currNode -> left, key);

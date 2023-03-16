@@ -19,6 +19,8 @@ public:
     
 private:
     Node *root;
+    Node* findNode(const string& ) const ;
+    void insertStringIntoNode(Node* , const string& ); 
     void preOrderHelper(Node*) const;
     void inOrderHelper(Node*) const;
     void postOrderHelper(Node*) const;
